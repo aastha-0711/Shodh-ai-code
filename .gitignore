@@ -1,0 +1,19 @@
+# Maven target folders
+target/
+*/target/
+
+# Node / frontend build
+node_modules/
+dist/
+
+# IDE configs
+.idea/
+.vscode/
+*.iml
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env

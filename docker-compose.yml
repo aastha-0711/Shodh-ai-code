@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: shodh
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: shodh
+    ports:
+      - "5432:5432"
+    networks:
+      - shodh-net
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  executor:
+    build: ./backend/executor
+    image: shodhacode/executor:latest
+    ports:
+      - "6000:6000"
+    networks:
+      - shodh-net
+
+  judge:
+    build: ./backend/judge
+    image: shodhacode/judge:latest
+    ports:
+      - "5000:5000"
+    depends_on:
+      - executor
+    networks:
+      - shodh-net
+
+  backend:
+    build: ./backend
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - judge
+    networks:
+      - shodh-net
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - shodh-net
+
+volumes:
+  db_data:
+
+networks:
+  shodh-net:
+    driver: bridge

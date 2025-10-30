@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: shodh
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: shodh
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  judge:
+    build:
+      context: ./backend/judge
+    image: shodhacode/judge:latest
+
+volumes:
+  db_data:
