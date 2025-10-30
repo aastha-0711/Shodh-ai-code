@@ -40,25 +40,26 @@ It allows users to participate in coding contests, submit solutions, and view le
 ---
 ## 🏗️ Project Structure
 
+```plaintext
 shodh-ai-code/
 ├── backend/
-│ ├── src/main/java/com/example/demo/
-│ │ ├── controller/ # REST APIs (Contest, Problem, Submission)
-│ │ ├── model/ # JPA Entities
-│ │ ├── repository/ # Spring Data JPA Repos
-│ │ ├── service/ # Business Logic & Code Judging
-│ │ ├── config/ # CORS, Web Config
-│ │ └── DataLoader.java # Sample data initialization
-│ ├── judge/ # Python code judging service
-│ ├── executor/ # Code runner Docker microservice
-│ ├── pom.xml # Maven configuration
-│ └── Dockerfile
+│   ├── src/main/java/com/example/demo/
+│   │   ├── controller/       # REST APIs (Contest, Problem, Submission)
+│   │   ├── model/            # JPA Entities
+│   │   ├── repository/       # Spring Data JPA Repos
+│   │   ├── service/          # Business Logic & Code Judging
+│   │   ├── config/           # CORS, Web Config
+│   │   └── DataLoader.java   # Sample data initialization
+│   ├── judge/                # Python code judging service
+│   ├── executor/             # Code runner Docker microservice
+│   ├── pom.xml               # Maven configuration
+│   └── Dockerfile
 │
-├── frontend/ # React frontend (contest UI)
-├── docker-compose.yml # Combined environment
-└── README.md # You are here
+├── frontend/                 # React frontend (contest UI)
+├── docker-compose.yml        # Combined environment
+└── README.md                 # You are here
+```
 ---
-
 ## 🧠 How It Works
 
 1. **User submits code** for a problem through the frontend.  
