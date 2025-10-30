@@ -1,67 +1,84 @@
-# Shodh-a-Code (Prototype)
+# 🧠 Shodh AI Code
 
-This repository contains a prototype coding contest platform with a Spring Boot backend and a Next.js frontend. Submissions are executed inside a small Docker-based judge container.
+**Shodh AI Code** is an intelligent **online code judging platform** designed to evaluate programming submissions in real time.  
+It allows users to participate in coding contests, submit solutions, and view leaderboards — all powered by a scalable, Docker-based backend.
 
-Quick overview
+---
 
-- backend: Spring Boot app (Java 21) exposing REST endpoints under `/api`
-- frontend: Next.js app (React + Tailwind) with join/contest UI
-- judge: small Docker image used to compile and run Java submissions
-- db: Postgres (configured in docker-compose)
+## 🚀 Features
 
-Run the full stack (Docker Desktop required)
+### 👨‍💻 For Users
+- Participate in **coding contests** with multiple problems  
+- Submit solutions in **multiple languages** (Python, C++, Java, etc.)  
+- Receive **real-time feedback** (Accepted / Wrong Answer / Time Limit Exceeded)  
+- View **leaderboards** updating dynamically per contest  
 
-1. From the repository root:
+### ⚙️ For System
+- **Spring Boot backend** with REST APIs (`/api/contests`, `/api/submissions`, `/api/leaderboard`)  
+- **Isolated Docker container** execution for safe code evaluation  
+- **Judge service** runs user code securely with:
+  - Time & memory limits  
+  - Sandboxed environment (no network, read-only FS)  
+  - Auto cleanup after execution  
+- **MySQL** or **PostgreSQL** database for contests, users, and submissions  
+- **React frontend** for a clean, interactive coding UI  
 
+---
+
+## 🧩 Tech Stack
+
+| Layer | Technology |
+|-------|-------------|
+| **Frontend** | React.js, TailwindCSS |
+| **Backend API** | Spring Boot (Java 21) |
+| **Execution Engine** | Python Flask (Dockerized) |
+| **Database** | MySQL / PostgreSQL |
+| **Containerization** | Docker + Docker Compose |
+| **Build Tools** | Maven |
+| **Version Control** | Git + GitHub |
+
+---
+## 🏗️ Project Structure
+
+shodh-ai-code/
+├── backend/
+│ ├── src/main/java/com/example/demo/
+│ │ ├── controller/ # REST APIs (Contest, Problem, Submission)
+│ │ ├── model/ # JPA Entities
+│ │ ├── repository/ # Spring Data JPA Repos
+│ │ ├── service/ # Business Logic & Code Judging
+│ │ ├── config/ # CORS, Web Config
+│ │ └── DataLoader.java # Sample data initialization
+│ ├── judge/ # Python code judging service
+│ ├── executor/ # Code runner Docker microservice
+│ ├── pom.xml # Maven configuration
+│ └── Dockerfile
+│
+├── frontend/ # React frontend (contest UI)
+├── docker-compose.yml # Combined environment
+└── README.md # You are here
+---
+
+## 🧠 How It Works
+
+1. **User submits code** for a problem through the frontend.  
+2. Backend **stores the submission** and sends it to the **Judge Service**.  
+3. Judge service **spins up a Docker container** to execute the code securely.  
+4. Code output is compared against **expected test cases**.  
+5. Result (Accepted / Wrong Answer / Runtime Error) is stored and **leaderboard updated**.
+
+---
+
+## 🧰 Setup Instructions
+
+### 🐳 Using Docker
 ```bash
+# Clone the repository
+git clone https://github.com/aastha-0711/Shodh-ai-code.git
+cd Shodh-ai-code
+
+# Build and run
 docker-compose up --build
-```
 
-This builds the judge image, the backend (multi-stage maven build), and the frontend.
+## 🏗️ Project Structure
 
-Helper scripts
-
-- `scripts\run-frontend-local.bat` — installs and runs the frontend locally (Windows).
-- `scripts\submit-example.bat` — attempts to POST a sample Java submission to the backend (Windows). You may need to extract the returned submissionId and poll manually.
-
-Host-backend workflow (Windows-friendly)
-
-If you prefer running the backend on your host (recommended on Windows because of Docker socket differences), use the helper to start only the database and judge containers:
-
-```cmd
-scripts\start-db-judge.bat
-```
-
-Then from a separate terminal build and run the backend locally:
-
-```cmd
-cd backend
-mvnw.cmd -DskipTests package
-java -jar target\demo-0.0.1-SNAPSHOT.jar
-```
-
-Finally run the frontend locally:
-
-```cmd
-scripts\run-frontend-local.bat
-```
-
-This flow avoids mounting the Docker socket into the backend container and works well on Windows.
-
-Usage
-
-- Open http://localhost:3000 and join the sample contest (use Contest ID `1` and any username).
-- Submit a Java program that defines `public class Main { public static void main(String[] args){...} }`.
-
-API
-
-- GET /api/contests/{contestId}
-- GET /api/contests/{contestId}/leaderboard
-- POST /api/submissions { problemId, username, code, language }
-- GET /api/submissions/{submissionId}
-
-Security & notes
-
-- This is a demo prototype. Running untrusted code in Docker has risks. For production, use stricter isolation (gVisor, Firecracker), resource limits, and input/output sanitization.
-- The compose setup mounts the host Docker socket into the `backend` container so the backend can `docker run` submissions when it itself runs inside a container. This is convenient for local demos but is insecure on shared hosts because it gives the container full control over the Docker daemon. Only use for local testing.
-- Windows caveat: Docker Desktop on Windows uses a different backend (named pipes). Mounting `/var/run/docker.sock` works as expected on Linux/macOS. On Windows, if you run into issues controlling Docker from the backend container, run the backend on the host (see section "Run backend locally") or configure Docker Desktop to expose the daemon via a TCP socket (not recommended for general use).
